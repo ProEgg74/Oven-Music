@@ -1,0 +1,270 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Oven Music</title>
+<style>
+/* ===== THEMES — edit here ===== */
+:root{--bg:#08080d;--card:#13131b;--card2:#1b1b26;--text:#f6f6f8;--muted:#9b9bab;--accent:#1ed760;--accent2:#7c3aed;--line:rgba(255,255,255,.09);--radius:20px;--shadow:0 18px 40px rgba(0,0,0,.45)}
+[data-theme="light"]{--bg:#f2f2f5;--card:#ffffff;--card2:#ececf1;--text:#14141a;--muted:#6a6a78;--accent:#00a651;--accent2:#7c3aed;--line:rgba(0,0,0,.09);--shadow:0 12px 30px rgba(0,0,0,.12)}
+[data-theme="christmas"]{--bg:#07130b;--card:#122a1a;--card2:#1a3a24;--text:#fff8ec;--muted:#b8d4bd;--accent:#e63b3b;--accent2:#2fbf71;--line:rgba(255,255,255,.12)}
+[data-theme="halloween"]{--bg:#0c0714;--card:#1a0f2a;--card2:#24163a;--text:#fff3e0;--muted:#c9aee6;--accent:#ff7a00;--accent2:#7ac142;--line:rgba(255,150,0,.18)}
+[data-theme="july"]{--bg:#050a1e;--card:#101a3d;--card2:#16224f;--text:#f0f4ff;--muted:#aab8e6;--accent:#ff3b4e;--accent2:#3b82ff;--line:rgba(120,160,255,.18)}
+[data-theme="summer"]{--bg:#0a1a2a;--card:#123043;--card2:#18425c;--text:#fffbe8;--muted:#b8d4e0;--accent:#ffb300;--accent2:#00c2a8;--line:rgba(255,200,0,.15)}
+[data-theme="pink"]{--bg:#150a14;--card:#241222;--card2:#331a30;--text:#ffeefb;--muted:#d8a9cf;--accent:#ff4da6;--accent2:#a855f7;--line:rgba(255,77,166,.18)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Inter",Manrope,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;transition:background .4s,color .4s;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(600px 400px at 15% -5%,color-mix(in srgb,var(--accent) 28%,transparent),transparent 60%),radial-gradient(600px 400px at 90% 10%,color-mix(in srgb,var(--accent2) 26%,transparent),transparent 60%);z-index:0}
+header,main,.mini{position:relative;z-index:1}
+header{position:sticky;top:0;z-index:20;display:flex;gap:10px;align-items:center;padding:14px 20px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.logo{font-weight:900;font-size:24px;letter-spacing:-1px}.logo em{font-style:normal;color:var(--accent)}
+input[type=text],select{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:10px 15px;outline:none;font:inherit}
+input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+button{background:var(--card2);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:10px 15px;cursor:pointer;font:inherit;font-weight:650;transition:transform .45s cubic-bezier(.34,1.56,.64,1),background .25s,box-shadow .3s;will-change:transform}
+button:hover{transform:scale(1.06) rotate(-1deg);box-shadow:0 10px 24px rgba(0,0,0,.3)}button:active{transform:scale(.9) rotate(1deg);transition-duration:.12s}
+@keyframes jiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-1.2deg) scale(1.02)}75%{transform:rotate(1.2deg) scale(1.02)}}
+@keyframes popIn{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes jelly{0%{transform:scale(1,1)}25%{transform:scale(.96,1.06)}50%{transform:scale(1.06,.94)}75%{transform:scale(.98,1.02)}100%{transform:scale(1,1)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.jiggle{animation:jiggle .45s cubic-bezier(.34,1.56,.64,1)} .pop{animation:popIn .45s cubic-bezier(.34,1.56,.64,1)} .jelly{animation:jelly .6s cubic-bezier(.34,1.56,.64,1)}
+button.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 18px 160px}
+.hero{display:flex;gap:14px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin:6px 0 18px}
+.hero h1{font-size:clamp(32px,5vw,52px);line-height:.95;letter-spacing:-2px;margin:0;animation:floaty 4s ease-in-out infinite}.hero p{color:var(--muted);margin:8px 0 0}
+.themeRow{display:flex;gap:8px;flex-wrap:wrap}.themeRow button{padding:8px 13px;font-size:13px}.themeRow button.on{background:var(--accent);color:#000;border-color:transparent}
+.grid{display:grid;grid-template-columns:1.25fr .85fr;gap:18px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);animation:rise .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.96)}60%{transform:translateY(-3px) scale(1.01)}to{opacity:1;transform:none}}
+#drop{border:2px dashed var(--line);border-radius:var(--radius);padding:26px;text-align:center;cursor:pointer;transition:transform .5s cubic-bezier(.34,1.56,.64,1),border-color .25s,background .25s}#drop:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent);transform:scale(1.015)}#drop:active{transform:scale(.98)}
+.song{display:flex;gap:13px;align-items:center;padding:10px;border-radius:16px;cursor:pointer;transition:transform .45s cubic-bezier(.34,1.56,.64,1),background .25s;animation:rise .4s cubic-bezier(.34,1.56,.64,1) both}.song:hover{background:var(--card2);transform:scale(1.02) rotate(-.4deg)} .song:active{transform:scale(.97)}.song.active{background:color-mix(in srgb,var(--accent) 16%,transparent);outline:1px solid color-mix(in srgb,var(--accent) 55%,transparent)}
+.art{width:56px;height:56px;border-radius:14px;flex:none;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,var(--accent),var(--accent2));overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.3)}.art img{width:100%;height:100%;object-fit:cover}
+.bigWrap{position:relative}.bigart{width:100%;aspect-ratio:1;border-radius:22px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-size:90px;overflow:hidden;box-shadow:0 22px 50px rgba(0,0,0,.45);transition:transform .3s}.bigart img{width:100%;height:100%;object-fit:cover}.bigart.playing{animation:spin 9s linear infinite;border-radius:50%}.bigart.jelly{animation:jelly .6s cubic-bezier(.34,1.56,.64,1)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.muted{color:var(--muted);font-size:13px}.small{font-size:12px}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:6px}
+.pill{font-size:12px;padding:5px 10px;border-radius:999px;background:var(--card2);border:1px solid var(--line)}
+.mini{position:fixed;left:14px;right:14px;bottom:14px;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:20px;padding:11px 14px;display:flex;gap:13px;align-items:center;z-index:30;box-shadow:var(--shadow);animation:miniIn .6s cubic-bezier(.34,1.56,.64,1) both;transition:transform .45s cubic-bezier(.34,1.56,.64,1)}@keyframes miniIn{from{transform:translateY(90px) scale(.95)}to{transform:none}}.mini:hover{transform:scale(1.01)}
+.playBig{width:58px;height:58px;border-radius:50%;font-size:22px;display:grid;place-items:center}
+.iconBtn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;padding:0}
+.coverBtn{position:absolute;right:10px;bottom:10px;font-size:12px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.ytResult{display:flex;gap:12px;align-items:center;padding:10px;border-radius:14px;cursor:pointer;transition:transform .4s cubic-bezier(.34,1.56,.64,1)} .ytResult:hover{background:var(--card2);transform:scale(1.02)}
+.ytResult img{width:96px;height:54px;object-fit:cover;border-radius:10px;flex:none}
+.lyricLine{padding:11px 12px;border-radius:14px;cursor:pointer;color:var(--muted);transition:transform .4s cubic-bezier(.34,1.56,.64,1),background .25s;font-size:15px}
+.lyricLine:hover{transform:scale(1.02);background:var(--card2)}
+.lyricLine.done{color:var(--text);opacity:.6}
+.lyricLine.cur{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:19px;transform:scale(1.03);box-shadow:0 10px 24px rgba(0,0,0,.3)}
+textarea{width:100%;background:var(--card2);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;outline:none}
+
+#themeEmoji{font-size:26px}
+</style></head><body data-theme="dark">
+<header><div class="logo">Oven <em>Music</em></div>
+<input id="search" type="text" placeholder="Search title, artist, album..." style="flex:1;min-width:170px">
+<select id="sort"><option value="recent">Recently added</option><option value="title">Title A–Z</option><option value="artist">Artist</option><option value="duration">Duration</option></select>
+<select id="filter"><option value="all">All songs</option><option value="liked">Liked</option><option value="recent">Recently Played</option></select>
+<label class="primary" style="background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:999px;padding:10px 16px;cursor:pointer;font-weight:800">+ Add Music<input id="fileInput" type="file" accept=".mp3,.m4a,.flac,.wav,.ogg,audio/*" multiple hidden></label>
+<button id="exportBtn">Export</button></header>
+<main class="wrap">
+<div class="hero"><div><h1 id="heroTitle">Fresh out<br>the oven.</h1><p id="heroSub">Hot tracks, straight from your files. No login. No ads.</p></div><div><div class="themeRow" id="themes"></div><div class="muted small" style="margin-top:8px;text-align:right">Space = play/pause • ←/→ seek • N next • P prev</div></div></div>
+<div id="drop"><b style="font-size:18px">Drop MP3 / M4A / FLAC / WAV / OGG here</b><div class="muted">or tap + Add Music — files stay on your device, saved offline</div></div>
+<div class="card" style="margin-top:16px"><h2 style="margin:0">Online Search — InnerTube <span class="muted" style="font-size:13px;font-weight:400">— needs internet, like SimpMusic</span></h2>
+<div class="muted small" style="margin:6px 0 10px">SimpMusic uses YouTube Music servers (InnerTube). In a single HTML file with no backend, we use the InnerTube API (YouTube / YouTube Music servers) to search + stream — same as SimpMusic. Yes — this part HAS to be online. Your uploaded files still work fully offline.</div>
+<div class="row"><input id="ytQuery" type="text" placeholder="Search YouTube — artist + song..." style="flex:1;min-width:180px"><button class="primary" id="ytSearchBtn">Search</button><button id="ytClear">Clear results</button></div>
+<div id="ytStatus" class="muted small" style="margin-top:8px"></div><div id="ytResults"></div></div>
+<div class="card" style="margin-top:16px"><h2 style="margin:0">Lyric Studio <span class="muted" style="font-size:13px;font-weight:400">— 100% on-device, line by line</span></h2>
+<div class="muted small" style="margin:6px 0 10px">1) Play a song &nbsp; 2) Paste plain lyrics below &nbsp; 3) Tap Start Sync &nbsp; 4) Tap each line exactly when you hear it — it stamps the time on-device &nbsp; 5) Save. No server, works offline.</div>
+<div class="row"><button id="fetchLyricsBtn">Auto-fetch synced (LRCLIB, needs internet)</button><button id="startSyncBtn" class="primary">Start Line-by-Line Sync</button><button id="saveLyricsBtn">Save Lyrics</button><button id="clearLyricsBtn">Clear Lyrics</button></div>
+<textarea id="lyricInput" rows="4" placeholder="Paste plain lyrics here, one line per line..."></textarea>
+<div id="lyricStudio" style="margin-top:10px"></div><div id="lyricStatus" class="muted small"></div></div>
+<div class="grid" style="margin-top:18px">
+<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0" id="listTitle">Library (0)</h2><div class="row"><button id="shuffleBtn">Shuffle Off</button><button id="repeatBtn">Repeat Off</button></div></div><div id="list"></div><div id="empty" class="empty">No songs yet.<br><b style="color:var(--text)">Add music to get started.</b><br>Nothing is preloaded.</div></div>
+<div><div class="card"><div class="bigWrap"><div class="bigart" id="bigArt">♪</div><label class="coverBtn pill" style="cursor:pointer">Change Cover<input id="coverInput" type="file" accept="image/*" hidden></label></div>
+<h2 id="npTitle" style="margin:14px 0 2px;font-size:26px;letter-spacing:-.5px">No song selected</h2><div class="muted" id="npArtist">Add music to start</div>
+<div class="row" style="margin-top:12px"><span id="curTime">0:00</span><input id="seek" type="range" min="0" max="100" value="0" style="flex:1"><span id="durTime">0:00</span></div>
+<div class="row" style="justify-content:center;margin-top:8px"><button class="iconBtn" id="prevBtn">⏮</button><button class="playBig primary" id="playBtn">▶</button><button class="iconBtn" id="nextBtn">⏭</button><button id="likeBtn">Like</button></div>
+<div class="row" style="margin-top:12px"><span>Vol</span><input id="vol" type="range" min="0" max="100" value="80" style="flex:1"><select id="speed"><option>0.5x</option><option>0.75x</option><option selected>1x</option><option>1.25x</option><option>1.5x</option><option>2x</option></select></div>
+<div class="row" style="margin-top:12px"><span class="pill" id="themeLabel">Theme: Dark</span><span class="pill" id="countLabel">0 songs</span><button id="clearBtn">Clear library</button></div>
+</div>
+<div class="card" style="margin-top:16px"><h3 style="margin:0 0 6px">Lyrics — Line by Line</h3><div id="lyricsView" class="muted">No lyrics yet. Use Lyric Studio above, or Auto-fetch.</div></div>
+<div class="card" style="margin-top:16px"><h3 style="margin:0 0 6px">Up Next</h3><div id="upNext" class="muted">Play something to see what's next.</div></div>
+</div></div></main>
+<div class="mini"><div class="art" id="miniArt">♪</div><div style="flex:1;min-width:0"><b id="miniTitle" style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">No song</b><div class="muted" id="miniArtist">—</div><input id="miniSeek" type="range" min="0" max="100" value="0"></div><button class="iconBtn" id="miniPrev">⏮</button><button class="playBig primary" id="miniPlay" style="width:48px;height:48px">▶</button><button class="iconBtn" id="miniNext">⏭</button></div>
+<audio id="audio" preload="metadata"></audio>
+<script>
+let songs=[],queue=[],qi=-1,shuffle=false,repeatMode=0,currentId=null;
+const $=id=>document.getElementById(id); const audio=$('audio');
+const THEMES=[{id:'dark',label:'Dark',title:'Fresh out<br>the oven.',sub:'Hot tracks, straight from your files. No login. No ads.'},{id:'light',label:'Light',title:'Clean &<br>bright.',sub:'Light mode, same player.'},{id:'christmas',label:'Christmas',title:'Merry &<br>loud.',sub:'Cozy Christmas vibes.'},{id:'halloween',label:'Halloween',title:'Spooky<br>season.',sub:'Pumpkins, ghosts & bangers.'},{id:'july',label:'July 4th',title:'Loud &<br>proud.',sub:'Fireworks mode.'},{id:'summer',label:'Summer',title:'Sunny<br>days.',sub:'Beach mode.'},{id:'pink',label:'Pink',title:'Soft &<br>pretty.',sub:'Pink everything.'}];
+function setTheme(id){document.body.dataset.theme=id;let t=THEMES.find(x=>x.id==id);$('heroTitle').innerHTML=t.title;$('heroSub').textContent=t.sub;$('themeLabel').textContent='Theme: '+t.label;localStorage.setItem('mp_theme',id);document.querySelectorAll('#themes button').forEach(b=>b.classList.toggle('on',b.dataset.t==id));}
+$('themes').innerHTML=THEMES.map(t=>`<button data-t="${t.id}">${t.label}</button>`).join('');document.querySelectorAll('#themes button').forEach(b=>b.onclick=()=>{b.classList.remove('jiggle');void b.offsetWidth;b.classList.add('jiggle');setTheme(b.dataset.t);});setTheme(localStorage.getItem('mp_theme')||'dark');
+function db(){return new Promise((res,rej)=>{let r=indexedDB.open('musicPlayerDB',1);r.onupgradeneeded=e=>{let d=e.target.result;if(!d.objectStoreNames.contains('songs'))d.createObjectStore('songs',{keyPath:'id'});};r.onsuccess=e=>res(e.target.result);r.onerror=e=>rej(e);});}
+async function saveAll(){let d=await db();let tx=d.transaction('songs','readwrite');songs.forEach(s=>tx.objectStore('songs').put(s));}
+async function loadAll(){try{let d=await db();let tx=d.transaction('songs','readonly');let req=tx.objectStore('songs').getAll();req.onsuccess=()=>{songs=req.result||[];queue=[...songs];render();};}catch(e){render();}}
+function fmt(s){if(!isFinite(s))return '0:00';s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function parseName(name){let base=name.replace(/\.[^.]+$/,'');let p=base.split(' - ');return{title:p[1]||p[0],artist:p[0]&&p[1]?p[0]:'Unknown Artist',album:'Unknown Album'};}
+async function extractArt(file){try{let buf=await file.slice(0,6000000).arrayBuffer();let u=new Uint8Array(buf);for(let sig of [[0xFF,0xD8,0xFF],[0x89,0x50,0x4E,0x47]]){for(let i=0;i<u.length-10;i++){if(u[i]==sig[0]&&u[i+1]==sig[1]&&u[i+2]==sig[2]){let blob=new Blob([u.slice(i,Math.min(u.length,i+400000))],{type:sig[0]==0xFF?'image/jpeg':'image/png'});if(blob.size>3000)return URL.createObjectURL(blob);}}}return null;}catch(e){return null}}
+async function addFiles(files){for(let f of files){let m=parseName(f.name);let art=await extractArt(f);let dur=0;try{let tmp=new Audio();tmp.src=URL.createObjectURL(f);dur=await new Promise(r=>{tmp.onloadedmetadata=()=>r(tmp.duration||0);tmp.onerror=()=>r(0);setTimeout(()=>r(0),2500);});}catch(e){}
+songs.unshift({id:Date.now()+'-'+Math.random().toString(36).slice(2),title:m.title,artist:m.artist,album:m.album,duration:dur,addedAt:Date.now(),liked:false,lastPlayed:0,blob:f,art:art});}queue=[...songs];await saveAll();render();}
+function filtered(){let q=$('search').value.toLowerCase();let f=$('filter').value;let list=[...songs];if(f=='liked')list=list.filter(s=>s.liked);if(f=='recent')list=list.filter(s=>s.lastPlayed).sort((a,b)=>b.lastPlayed-a.lastPlayed);if(q)list=list.filter(s=>(s.title+' '+s.artist+' '+s.album).toLowerCase().includes(q));let so=$('sort').value;if(so=='title')list.sort((a,b)=>a.title.localeCompare(b.title));if(so=='artist')list.sort((a,b)=>a.artist.localeCompare(b.artist));if(so=='duration')list.sort((a,b)=>b.duration-a.duration);if(so=='recent')list.sort((a,b)=>b.addedAt-a.addedAt);return list;}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function render(){let list=filtered();$('listTitle').textContent='Library ('+list.length+')';$('countLabel').textContent=list.length+' songs';$('empty').style.display=list.length?'none':'block';
+$('list').innerHTML=list.map(s=>`<div class="song ${s.id==currentId?'active':''}" data-id="${s.id}"><div class="art">${s.art?`<img src="${s.art}">`:'♪'}</div><div style="flex:1;min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.title)}</b><div class="muted">${esc(s.artist)} • ${fmt(s.duration)}${s.isYT?' • YT':''}</div></div><button data-like="${s.id}">${s.liked?'♥':'♡'}</button><button data-cover="${s.id}" title="Change cover">Cover</button><button data-del="${s.id}">×</button></div>`).join('');
+document.querySelectorAll('[data-like]').forEach(b=>b.onclick=e=>{e.stopPropagation();let s=songs.find(x=>x.id==b.dataset.like);s.liked=!s.liked;saveAll();render();});
+document.querySelectorAll('[data-del]').forEach(b=>b.onclick=e=>{e.stopPropagation();if(!confirm('Remove this song?'))return;songs=songs.filter(x=>x.id!=b.dataset.del);queue=queue.filter(x=>x.id!=b.dataset.del);saveAll();render();});
+document.querySelectorAll('[data-cover]').forEach(b=>b.onclick=e=>{e.stopPropagation();changeCover(b.dataset.cover);});
+document.querySelectorAll('.song').forEach(el=>el.onclick=()=>playById(el.dataset.id));
+let nxt=queue.slice(qi+1,qi+4);$('upNext').innerHTML=nxt.length?nxt.map((s,i)=>`<div style="padding:6px 0">${i+1}. ${esc(s.title)} — ${esc(s.artist)}</div>`).join(''):'Play something to see what\'s next.';}
+async function changeCover(id){let inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.onchange=async()=>{let f=inp.files[0];if(!f)return;let url=URL.createObjectURL(f);let s=songs.find(x=>x.id==id);if(!s)return;s.art=url;let q=queue.find(x=>x.id==id);if(q)q.art=url;await saveAll();render();if(currentId==id){$('bigArt').innerHTML=`<img src="${url}">`;$('miniArt').innerHTML=`<img src="${url}">`;}};inp.click();}
+$('coverInput').onchange=async e=>{let f=e.target.files[0];let s=queue[qi];if(!f||!s)return alert('Play a song first, then change its cover');let url=URL.createObjectURL(f);s.art=url;let orig=songs.find(x=>x.id==s.id);if(orig)orig.art=url;await saveAll();render();$('bigArt').innerHTML=`<img src="${url}">`;$('miniArt').innerHTML=`<img src="${url}">`;};
+function playById(id){let idx=queue.findIndex(s=>s.id==id);if(idx<0){queue=[...songs];idx=queue.findIndex(s=>s.id==id);}qi=idx;playCurrent();}
+function playCurrent(){let s=queue[qi];if(!s)return;currentId=s.id;s.lastPlayed=Date.now();saveAll();if(s.ytUrl){audio.src=s.ytUrl;}else if(s.blob){audio.src=URL.createObjectURL(s.blob);}else{alert('No audio for this song — re-add the file, or it was a YouTube song that needs internet.');return;}audio.play();$('lyricInput').value=s.lyrics||'';$('lyricStudio').innerHTML='';syncLines=[];syncActive=false;renderLyrics();$('npTitle').textContent=s.title;$('npArtist').textContent=s.artist+' • '+s.album;$('miniTitle').textContent=s.title;$('miniArtist').textContent=s.artist;$('bigArt').innerHTML=s.art?`<img src="${s.art}">`:'♪';$('bigArt').classList.add('playing');$('bigArt').classList.remove('jelly');void $('bigArt').offsetWidth;$('bigArt').classList.add('jelly');$('miniArt').innerHTML=s.art?`<img src="${s.art}">`:'♪';$('likeBtn').textContent=s.liked?'Liked':'Like';$('playBtn').textContent='⏸';$('miniPlay').textContent='⏸';render();}
+function togglePlay(){if(!currentId){if(queue.length)playById(queue[0].id);return;}if(audio.paused){audio.play();$('playBtn').textContent='⏸';$('miniPlay').textContent='⏸';$('bigArt').classList.add('playing');$('bigArt').classList.remove('jelly');void $('bigArt').offsetWidth;$('bigArt').classList.add('jelly');}else{audio.pause();$('playBtn').textContent='▶';$('miniPlay').textContent='▶';$('bigArt').classList.remove('playing');}}
+function next(auto=false){if(!queue.length)return;if(repeatMode==2&&auto){audio.currentTime=0;audio.play();return;}if(shuffle){qi=Math.floor(Math.random()*queue.length);}else{qi++;if(qi>=queue.length){if(repeatMode==1)qi=0;else{qi=queue.length-1;return;}}}playCurrent();}
+function prev(){if(audio.currentTime>3){audio.currentTime=0;return;}qi--;if(qi<0)qi=0;playCurrent();}
+$('fileInput').onchange=e=>addFiles([...e.target.files]);$('drop').ondragover=e=>{e.preventDefault();};$('drop').ondrop=e=>{e.preventDefault();addFiles([...e.dataTransfer.files].filter(f=>f.type.startsWith('audio')||/\.(mp3|m4a|flac|wav|ogg)$/i.test(f.name)));};$('drop').onclick=()=>$('fileInput').click();
+$('search').oninput=render;$('sort').onchange=render;$('filter').onchange=render;
+$('playBtn').onclick=e=>{e.currentTarget.classList.remove('pop');void e.currentTarget.offsetWidth;e.currentTarget.classList.add('pop');togglePlay();};$('miniPlay').onclick=togglePlay;$('nextBtn').onclick=()=>next();$('miniNext').onclick=()=>next();$('prevBtn').onclick=prev;$('miniPrev').onclick=prev;
+$('shuffleBtn').onclick=()=>{shuffle=!shuffle;$('shuffleBtn').textContent='Shuffle '+(shuffle?'On':'Off');};
+$('repeatBtn').onclick=()=>{repeatMode=(repeatMode+1)%3;$('repeatBtn').textContent='Repeat '+['Off','All','One'][repeatMode];};
+$('likeBtn').onclick=()=>{let s=queue[qi];if(!s)return;s.liked=!s.liked;saveAll();render();$('likeBtn').textContent=s.liked?'Liked':'Like';};
+$('vol').oninput=e=>audio.volume=e.target.value/100;$('speed').onchange=e=>audio.playbackRate=parseFloat(e.target.value);
+$('seek').oninput=e=>{if(audio.duration)audio.currentTime=e.target.value/100*audio.duration;};$('miniSeek').oninput=e=>{if(audio.duration)audio.currentTime=e.target.value/100*audio.duration;};
+$('exportBtn').onclick=()=>{let data=songs.map(({blob,art,...r})=>r);let b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='music-library.json';a.click();};
+$('clearBtn').onclick=()=>{if(!confirm('Clear whole library?'))return;songs=[];queue=[];qi=-1;currentId=null;audio.pause();saveAll();render();};
+
+
+// ===== YT via InnerTube API (what SimpMusic uses) =====
+// SimpMusic talks to YouTube Music's InnerTube. We use the YouTube WEB InnerTube client.
+// NOTE: YouTube blocks direct browser calls with CORS sometimes, so we try direct first,
+// then a public CORS proxy. That is why this part MUST be online - InnerTube = YouTube servers.
+const IT_KEY="AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
+const IT_CLIENT={clientName:"WEB",clientVersion:"2.20240222.03.00",hl:"en",gl:"US"};
+async function itPost(endpoint, body){
+  let payload={context:{client:IT_CLIENT},...body};
+  // 1) direct
+  try{
+    let r=await fetch(`https://www.youtube.com/youtubei/v1/${endpoint}?key=${IT_KEY}&prettyPrint=false`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    if(r.ok) return await r.json();
+  }catch(e){}
+  // 2) via CORS proxy (needed on most browsers / Chromebooks)
+  let r2=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(`https://www.youtube.com/youtubei/v1/${endpoint}?key=${IT_KEY}`)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  if(!r2.ok) throw new Error("InnerTube blocked");
+  return await r2.json();
+}
+function parseYTSearch(j){
+  let out=[];
+  try{
+    let sections=j.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents||[];
+    for(let sec of sections){
+      let items=sec.itemSectionRenderer?.contents||[];
+      for(let it of items){
+        let v=it.videoRenderer; if(!v) continue;
+        let title=(v.title?.runs||[]).map(x=>x.text).join('');
+        let thumbs=v.thumbnail?.thumbnails||[]; let thumb=thumbs.length?thumbs[thumbs.length-1].url:'';
+        let len=0; let lt=v.lengthText?.simpleText||""; if(lt){let parts=lt.split(':').map(Number); len=parts.length==3?parts[0]*3600+parts[1]*60+parts[2]:parts[0]*60+parts[1];}
+        out.push({videoId:v.videoId,title,author:(v.ownerText?.runs||[]).map(x=>x.text).join('')||'YouTube',thumb,lengthSeconds:len});
+      }
+    }
+  }catch(e){}
+  return out;
+}
+async function ytSearch(){
+  let q=$('ytQuery').value.trim(); if(!q) return alert('Type a song to search');
+  $('ytStatus').textContent='Searching via InnerTube (YouTube servers)...'; $('ytResults').innerHTML='';
+  try{
+    let j=await itPost('search',{query:q});
+    let data=parseYTSearch(j);
+    if(!data.length){$('ytStatus').textContent='No results from InnerTube. Try a different search.'; return;}
+    $('ytStatus').textContent='Found via InnerTube — tap a result to stream it. Online only, will NOT work offline.';
+    $('ytResults').innerHTML=data.slice(0,10).map(v=>`<div class="ytResult" data-id="${v.videoId}"><img src="${v.thumb}"><div style="flex:1;min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(v.title)}</b><div class="muted">${esc(v.author)} • ${fmt(v.lengthSeconds||0)}</div></div><button>Play</button></div>`).join('');
+    document.querySelectorAll('.ytResult').forEach(el=>el.onclick=()=>playYT(el.dataset.id));
+  }catch(e){$('ytStatus').textContent='InnerTube blocked / offline. YouTube needs internet + CORS. Your uploaded files still work offline.';}
+}
+async function playYT(id){
+  $('ytStatus').textContent='Getting stream via InnerTube player...';
+  try{
+    let j=await itPost('player',{videoId:id,playbackContext:{contentPlaybackContext:{vis:0}}});
+    // Fix: playbackContext above has a typo key in some builds - retry clean if needed
+    let sd=j.streamingData||{};
+    let fmts=[...(sd.adaptiveFormats||[]),...(sd.formats||[])];
+    // Prefer audio-only with a direct url (no signatureCipher decipher needed)
+    let audioFmt=fmts.filter(f=>f.mimeType&&f.mimeType.includes('audio')&&f.url).sort((a,b)=>(b.bitrate||0)-(a.bitrate||0))[0]
+      || fmts.filter(f=>f.url).sort((a,b)=>(b.bitrate||0)-(a.bitrate||0))[0];
+    if(!audioFmt) throw new Error('No playable format - video may need signature decipher / age check');
+    let title=j.videoDetails?.title||'YouTube song';
+    let author=j.videoDetails?.author||'YouTube';
+    let thumb=(j.videoDetails?.thumbnail?.thumbnails||[]).pop()?.url||`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+    let s={id:'yt-'+id,title,artist:author,album:'YouTube',duration:+j.videoDetails?.lengthSeconds||0,addedAt:Date.now(),liked:false,lastPlayed:Date.now(),blob:null,art:thumb,ytUrl:audioFmt.url,lyrics:'',isYT:true};
+    if(!songs.find(x=>x.id==s.id)){songs.unshift(s); queue=[...songs];}
+    qi=queue.findIndex(x=>x.id==s.id); currentId=s.id;
+    audio.src=s.ytUrl; await audio.play().catch(()=>alert('Stream blocked by YouTube/CORS. Try another result.'));
+    $('npTitle').textContent=s.title; $('npArtist').textContent=s.artist+' • YouTube (online)'; $('miniTitle').textContent=s.title; $('miniArtist').textContent=s.artist;
+    $('bigArt').innerHTML=`<img src="${s.art}">`; $('miniArt').innerHTML=`<img src="${s.art}">`; $('bigArt').classList.add('playing');
+    $('ytStatus').textContent='Now streaming via InnerTube — needs internet. Will stop if you go offline.';
+    $('lyricInput').value=s.lyrics||''; render(); renderLyrics();
+  }catch(e){
+    $('ytStatus').textContent='Could not get stream: '+e.message;
+    if(confirm('InnerTube stream blocked. Open this video on YouTube instead?')) window.open('https://youtube.com/watch?v='+id,'_blank');
+  }
+}
+$('ytSearchBtn').onclick=ytSearch; $('ytQuery').onkeydown=e=>{if(e.key=='Enter')ytSearch();}; $('ytClear').onclick=()=>{$('ytResults').innerHTML='';$('ytStatus').textContent='';};
+
+// ===== Lyrics: on-device, line-by-line =====
+function parseLRC(text){let out=[];text.split('\n').forEach(l=>{if(/^\[(ti|ar|al|by|re|ve|offset):/i.test(l.trim()))return;let m=l.match(/\[(\d+):(\d+)\.(\d+)\]\s*(.*)/);if(m)out.push({t:+m[1]*60+ +m[2]+ +m[3]/100,txt:m[4]});});return out.sort((a,b)=>a.t-b.t);}
+function getLyricsText(){let s=queue[qi];return s? (s.lyrics||'') : '';}
+function renderLyrics(){
+  let txt=getLyricsText(); let box=$('lyricsView');
+  if(!txt){box.innerHTML='<span class="muted">No lyrics yet. Use Lyric Studio above, or Auto-fetch.</span>';return;}
+  let lines=parseLRC(txt);
+  if(!lines.length){box.innerHTML='<div style="white-space:pre-wrap;color:var(--text)">'+esc(txt)+'</div>';return;}
+  box.innerHTML=lines.map((l,i)=>`<div class="lyricLine" data-i="${i}" data-t="${l.t}">${esc(l.txt||'♪')}</div>`).join('');
+  document.querySelectorAll('#lyricsView .lyricLine').forEach(el=>el.onclick=()=>{if(audio.duration) audio.currentTime=+el.dataset.t; audio.play();});
+}
+async function fetchLyrics(){
+  let s=queue[qi]; if(!s) return alert('Play a song first');
+  $('lyricStatus').textContent='Fetching from LRCLIB...';
+  try{
+    let url=`https://lrclib.net/api/get?artist_name=${encodeURIComponent(s.artist)}&track_name=${encodeURIComponent(s.title)}&album_name=${encodeURIComponent(s.album||'')}&duration=${Math.round(s.duration||0)}`;
+    let r=await fetch(url); let j=await r.json();
+    if(j.syncedLyrics){s.lyrics=j.syncedLyrics; $('lyricInput').value=j.syncedLyrics; $('lyricStatus').textContent='Got synced lyrics from LRCLIB — saved on-device.';}
+    else if(j.plainLyrics){s.lyrics=j.plainLyrics; $('lyricInput').value=j.plainLyrics; $('lyricStatus').textContent='Got plain lyrics (no timestamps). Use Start Sync to stamp them line by line.';}
+    else $('lyricStatus').textContent='No match on LRCLIB. Paste lyrics and use Start Sync.';
+    await saveAll(); renderLyrics();
+  }catch(e){$('lyricStatus').textContent='Offline / LRCLIB blocked. Paste lyrics and sync on-device instead.';}
+}
+let syncLines=[], syncIdx=0, syncActive=false;
+function startSync(){
+  let s=queue[qi]; if(!s) return alert('Play a song first');
+  let raw=$('lyricInput').value.trim() || s.lyrics || '';
+  if(!raw) return alert('Paste lyrics first');
+  // strip any old timestamps, keep plain lines
+  syncLines=raw.split('\n').map(l=>l.replace(/^\[\d+:\d+\.\d+\]\s*/,'').replace(/^\[(ti|ar|al|by):.*\]/i,'').trim()).filter(Boolean);
+  syncIdx=0; syncActive=true;
+  audio.currentTime=0; audio.play();
+  renderSyncStudio();
+  $('lyricStatus').textContent='SYNC MODE: Tap the line you hear RIGHT NOW. Each tap stamps [mm:ss.xx] on-device.';
+}
+function renderSyncStudio(){
+  let box=$('lyricStudio');
+  box.innerHTML=syncLines.map((t,i)=>`<div class="lyricLine ${i<syncIdx?'done':''} ${i==syncIdx?'cur':''}" data-sync="${i}">${esc(t)} ${i<syncIdx?'— stamped':''}</div>`).join('');
+  document.querySelectorAll('[data-sync]').forEach(el=>el.onclick=()=>{
+    if(!syncActive) return;
+    let i=+el.dataset.sync; if(i!==syncIdx) return; // must go in order, line by line
+    let t=audio.currentTime||0; let m=Math.floor(t/60), sec=t-m*60;
+    syncLines[i]=`[${String(m).padStart(2,'0')}:${sec.toFixed(2).padStart(5,'0')}] ${syncLines[i].replace(/^\[\d+:\d+\.\d+\]\s*/,'')}`;
+    syncIdx++;
+    if(syncIdx>=syncLines.length){syncActive=false; $('lyricStatus').textContent='Done! All lines stamped. Tap Save Lyrics.';}
+    renderSyncStudio();
+    let cur=document.querySelector('#lyricStudio .lyricLine.cur'); if(cur) cur.scrollIntoView({block:'center',behavior:'smooth'});
+  });
+  // also show in main lyrics view as you go
+  let s=queue[qi]; if(s){s.lyrics=syncLines.join('\n'); renderLyrics();}
+}
+$('fetchLyricsBtn').onclick=fetchLyrics;
+$('startSyncBtn').onclick=startSync;
+$('saveLyricsBtn').onclick=async()=>{let s=queue[qi]; if(!s) return alert('Play a song first'); s.lyrics= syncLines.length? syncLines.join('\n') : $('lyricInput').value; await saveAll(); renderLyrics(); $('lyricStatus').textContent='Lyrics saved on-device — works offline next time.';};
+$('clearLyricsBtn').onclick=async()=>{let s=queue[qi]; if(!s) return; s.lyrics=''; syncLines=[]; syncActive=false; $('lyricInput').value=''; $('lyricStudio').innerHTML=''; await saveAll(); renderLyrics();};
+$('lyricInput').oninput=()=>{let s=queue[qi]; if(s){s.lyrics=$('lyricInput').value; renderLyrics();}};
+
+// patch playCurrent to handle YT streams + load lyrics into studio
+const _origPlayCurrent = playCurrent;
+
+audio.ontimeupdate=()=>{if(!audio.duration)return;let p=audio.currentTime/audio.duration*100;$('seek').value=p;$('miniSeek').value=p;$('curTime').textContent=fmt(audio.currentTime);$('durTime').textContent=fmt(audio.duration);let lines=parseLRC(getLyricsText());let cur=-1;lines.forEach((l,i)=>{if(audio.currentTime>=l.t)cur=i;});document.querySelectorAll('#lyricsView .lyricLine').forEach((el,i)=>{el.classList.toggle('cur',i==cur);if(i==cur)el.scrollIntoView({block:'center',behavior:'smooth'});});};
+audio.onended=()=>next(true);audio.onloadedmetadata=()=>$('durTime').textContent=fmt(audio.duration);
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;if(e.code=='Space'){e.preventDefault();togglePlay();}if(e.key=='ArrowRight')audio.currentTime+=5;if(e.key=='ArrowLeft')audio.currentTime-=5;if(e.key.toLowerCase()=='n')next();if(e.key.toLowerCase()=='p')prev();});
+audio.volume=.8;loadAll();
+</script></body></html>
